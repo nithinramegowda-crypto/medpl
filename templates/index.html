@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MedPuls</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>✚ MedPuls</h1>
+    <h2>Medicine Reminder System</h2>
+
+    <div class="form-box">
+        <h3>Add Medicine</h3>
+
+        <form action="/add" method="POST">
+
+            <input type="text" name="name"
+            placeholder="Medicine Name" required>
+
+            <input type="text" name="dosage"
+            placeholder="Dosage instructions" required>
+
+            <input type="time" name="time" required>
+
+            <button type="submit">Add Medicine</button>
+
+        </form>
+    </div>
+
+    <div class="medicine-list">
+        <h2>My Medicines</h2>
+
+        {% for medicine in medicines %}
+
+        <div class="medicine">
+
+            <h3>{{ medicine[1] }}</h3>
+
+            <p>Dosage: {{ medicine[2] }}</p>
+
+            <p>Time: {{ medicine[3] }}</p>
+
+            <a href="/delete/{{ medicine[0] }}">Delete</a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>

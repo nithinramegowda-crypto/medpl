@@ -1,0 +1,57 @@
+
+from flask import Flask, render_template, request, redirect
+import sqlite3
+
+app = Flask(__name__)
+
+def create_database():
+    conn = sqlite3.connect("medpuls.db")
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS medicines (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            dosage TEXT NOT NULL,
+            time TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+@app.route("/")
+def home():
+    conn = sqlite3.connect("medpuls.db")
+    medicines = conn.execute(
+        "SELECT * FROM medicines"
+    ).fetchall()
+    conn.close()
+
+    return render_template("index.html", medicines=medicines)
+
+@app.route("/add", methods=["POST"])
+def add():
+    name = request.form["name"]
+    dosage = request.form["dosage"]
+    time = request.form["time"]
+
+    conn = sqlite3.connect("medpuls.db")
+    conn.execute(
+        "INSERT INTO medicines (name, dosage, time) VALUES (?, ?, ?)",
+        (name, dosage, time)
+    )
+    conn.commit()
+    conn.close()
+
+    return redirect("/")
+
+@app.route("/delete/<int:id>")
+def delete(id):
+    conn = sqlite3.connect("medpuls.db")
+    conn.execute("DELETE FROM medicines WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/")
+
+if __name__ == "__main__":
+    create_database()
+    app.run(debug=True)
